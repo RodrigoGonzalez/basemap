@@ -16,26 +16,27 @@ def _swig_setattr_nondynamic(self,class_type,name,value,static=1):
         if type(value).__name__ == 'PySwigObject':
             self.__dict__[name] = value
             return
-    method = class_type.__swig_setmethods__.get(name,None)
-    if method: return method(self,value)
+    if method := class_type.__swig_setmethods__.get(name, None):
+        return method(self,value)
     if (not static) or hasattr(self,name):
         self.__dict__[name] = value
     else:
-        raise AttributeError("You cannot add attributes to %s" % self)
+        raise AttributeError(f"You cannot add attributes to {self}")
 
 def _swig_setattr(self,class_type,name,value):
     return _swig_setattr_nondynamic(self,class_type,name,value,0)
 
 def _swig_getattr(self,class_type,name):
     if (name == "thisown"): return self.this.own()
-    method = class_type.__swig_getmethods__.get(name,None)
-    if method: return method(self)
+    if method := class_type.__swig_getmethods__.get(name, None):
+        return method(self)
     raise AttributeError,name
 
 def _swig_repr(self):
-    try: strthis = "proxy of " + self.this.__repr__()
+    try:
+        strthis = f"proxy of {self.this.__repr__()}"
     except: strthis = ""
-    return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
+    return f"<{self.__class__.__module__}.{self.__class__.__name__}; {strthis} >"
 
 import types
 try:
@@ -53,7 +54,8 @@ def _swig_setattr_nondynamic_method(set):
         if hasattr(self,name) or (name == "this"):
             set(self,name,value)
         else:
-            raise AttributeError("You cannot add attributes to %s" % self)
+            raise AttributeError(f"You cannot add attributes to {self}")
+
     return set_attr
 
 
@@ -63,21 +65,36 @@ class PySwigIterator(object):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_PySwigIterator
     __del__ = lambda self : None;
-    def value(*args): return _geos.PySwigIterator_value(*args)
-    def incr(*args): return _geos.PySwigIterator_incr(*args)
-    def decr(*args): return _geos.PySwigIterator_decr(*args)
-    def distance(*args): return _geos.PySwigIterator_distance(*args)
-    def equal(*args): return _geos.PySwigIterator_equal(*args)
-    def copy(*args): return _geos.PySwigIterator_copy(*args)
-    def next(*args): return _geos.PySwigIterator_next(*args)
-    def previous(*args): return _geos.PySwigIterator_previous(*args)
-    def advance(*args): return _geos.PySwigIterator_advance(*args)
-    def __eq__(*args): return _geos.PySwigIterator___eq__(*args)
-    def __ne__(*args): return _geos.PySwigIterator___ne__(*args)
-    def __iadd__(*args): return _geos.PySwigIterator___iadd__(*args)
-    def __isub__(*args): return _geos.PySwigIterator___isub__(*args)
-    def __add__(*args): return _geos.PySwigIterator___add__(*args)
-    def __sub__(*args): return _geos.PySwigIterator___sub__(*args)
+    def value(self):
+        return _geos.PySwigIterator_value(*self)
+    def incr(self):
+        return _geos.PySwigIterator_incr(*self)
+    def decr(self):
+        return _geos.PySwigIterator_decr(*self)
+    def distance(self):
+        return _geos.PySwigIterator_distance(*self)
+    def equal(self):
+        return _geos.PySwigIterator_equal(*self)
+    def copy(self):
+        return _geos.PySwigIterator_copy(*self)
+    def next(self):
+        return _geos.PySwigIterator_next(*self)
+    def previous(self):
+        return _geos.PySwigIterator_previous(*self)
+    def advance(self):
+        return _geos.PySwigIterator_advance(*self)
+    def __eq__(self):
+        return _geos.PySwigIterator___eq__(*self)
+    def __ne__(self):
+        return _geos.PySwigIterator___ne__(*self)
+    def __iadd__(self):
+        return _geos.PySwigIterator___iadd__(*self)
+    def __isub__(self):
+        return _geos.PySwigIterator___isub__(*self)
+    def __add__(self):
+        return _geos.PySwigIterator___add__(*self)
+    def __sub__(self):
+        return _geos.PySwigIterator___sub__(*self)
     def __iter__(self): return self
 PySwigIterator_swigregister = _geos.PySwigIterator_swigregister
 PySwigIterator_swigregister(PySwigIterator)
@@ -112,17 +129,28 @@ class CoordinateSequence(object):
         except: self.this = this
     __swig_destroy__ = _geos.delete_CoordinateSequence
     __del__ = lambda self : None;
-    def clone(*args): return _geos.CoordinateSequence_clone(*args)
-    def setX(*args): return _geos.CoordinateSequence_setX(*args)
-    def setY(*args): return _geos.CoordinateSequence_setY(*args)
-    def setZ(*args): return _geos.CoordinateSequence_setZ(*args)
-    def setOrdinate(*args): return _geos.CoordinateSequence_setOrdinate(*args)
-    def getX(*args): return _geos.CoordinateSequence_getX(*args)
-    def getY(*args): return _geos.CoordinateSequence_getY(*args)
-    def getZ(*args): return _geos.CoordinateSequence_getZ(*args)
-    def getOrdinate(*args): return _geos.CoordinateSequence_getOrdinate(*args)
-    def getSize(*args): return _geos.CoordinateSequence_getSize(*args)
-    def getDimensions(*args): return _geos.CoordinateSequence_getDimensions(*args)
+    def clone(self):
+        return _geos.CoordinateSequence_clone(*self)
+    def setX(self):
+        return _geos.CoordinateSequence_setX(*self)
+    def setY(self):
+        return _geos.CoordinateSequence_setY(*self)
+    def setZ(self):
+        return _geos.CoordinateSequence_setZ(*self)
+    def setOrdinate(self):
+        return _geos.CoordinateSequence_setOrdinate(*self)
+    def getX(self):
+        return _geos.CoordinateSequence_getX(*self)
+    def getY(self):
+        return _geos.CoordinateSequence_getY(*self)
+    def getZ(self):
+        return _geos.CoordinateSequence_getZ(*self)
+    def getOrdinate(self):
+        return _geos.CoordinateSequence_getOrdinate(*self)
+    def getSize(self):
+        return _geos.CoordinateSequence_getSize(*self)
+    def getDimensions(self):
+        return _geos.CoordinateSequence_getDimensions(*self)
 CoordinateSequence_swigregister = _geos.CoordinateSequence_swigregister
 CoordinateSequence_swigregister(CoordinateSequence)
 
@@ -132,46 +160,86 @@ class Geometry(object):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_Geometry
     __del__ = lambda self : None;
-    def clone(*args): return _geos.Geometry_clone(*args)
-    def geomType(*args): return _geos.Geometry_geomType(*args)
-    def typeId(*args): return _geos.Geometry_typeId(*args)
-    def normalize(*args): return _geos.Geometry_normalize(*args)
-    def getSRID(*args): return _geos.Geometry_getSRID(*args)
-    def setSRID(*args): return _geos.Geometry_setSRID(*args)
-    def getDimensions(*args): return _geos.Geometry_getDimensions(*args)
-    def getNumGeometries(*args): return _geos.Geometry_getNumGeometries(*args)
-    def intersection(*args): return _geos.Geometry_intersection(*args)
-    def buffer(*args): return _geos.Geometry_buffer(*args)
-    def convexHull(*args): return _geos.Geometry_convexHull(*args)
-    def difference(*args): return _geos.Geometry_difference(*args)
-    def symDifference(*args): return _geos.Geometry_symDifference(*args)
-    def boundary(*args): return _geos.Geometry_boundary(*args)
-    def union(*args): return _geos.Geometry_union(*args)
-    def pointOnSurface(*args): return _geos.Geometry_pointOnSurface(*args)
-    def getCentroid(*args): return _geos.Geometry_getCentroid(*args)
-    def getEnvelope(*args): return _geos.Geometry_getEnvelope(*args)
-    def relate(*args): return _geos.Geometry_relate(*args)
-    def lineMerge(*args): return _geos.Geometry_lineMerge(*args)
-    def simplify(*args): return _geos.Geometry_simplify(*args)
-    def topologyPreserveSimplify(*args): return _geos.Geometry_topologyPreserveSimplify(*args)
-    def relatePattern(*args): return _geos.Geometry_relatePattern(*args)
-    def disjoint(*args): return _geos.Geometry_disjoint(*args)
-    def touches(*args): return _geos.Geometry_touches(*args)
-    def intersects(*args): return _geos.Geometry_intersects(*args)
-    def crosses(*args): return _geos.Geometry_crosses(*args)
-    def within(*args): return _geos.Geometry_within(*args)
-    def contains(*args): return _geos.Geometry_contains(*args)
-    def overlaps(*args): return _geos.Geometry_overlaps(*args)
-    def equals(*args): return _geos.Geometry_equals(*args)
-    def equalsExact(*args): return _geos.Geometry_equalsExact(*args)
-    def isEmpty(*args): return _geos.Geometry_isEmpty(*args)
-    def isValid(*args): return _geos.Geometry_isValid(*args)
-    def isSimple(*args): return _geos.Geometry_isSimple(*args)
-    def isRing(*args): return _geos.Geometry_isRing(*args)
-    def hasZ(*args): return _geos.Geometry_hasZ(*args)
-    def area(*args): return _geos.Geometry_area(*args)
-    def length(*args): return _geos.Geometry_length(*args)
-    def distance(*args): return _geos.Geometry_distance(*args)
+    def clone(self):
+        return _geos.Geometry_clone(*self)
+    def geomType(self):
+        return _geos.Geometry_geomType(*self)
+    def typeId(self):
+        return _geos.Geometry_typeId(*self)
+    def normalize(self):
+        return _geos.Geometry_normalize(*self)
+    def getSRID(self):
+        return _geos.Geometry_getSRID(*self)
+    def setSRID(self):
+        return _geos.Geometry_setSRID(*self)
+    def getDimensions(self):
+        return _geos.Geometry_getDimensions(*self)
+    def getNumGeometries(self):
+        return _geos.Geometry_getNumGeometries(*self)
+    def intersection(self):
+        return _geos.Geometry_intersection(*self)
+    def buffer(self):
+        return _geos.Geometry_buffer(*self)
+    def convexHull(self):
+        return _geos.Geometry_convexHull(*self)
+    def difference(self):
+        return _geos.Geometry_difference(*self)
+    def symDifference(self):
+        return _geos.Geometry_symDifference(*self)
+    def boundary(self):
+        return _geos.Geometry_boundary(*self)
+    def union(self):
+        return _geos.Geometry_union(*self)
+    def pointOnSurface(self):
+        return _geos.Geometry_pointOnSurface(*self)
+    def getCentroid(self):
+        return _geos.Geometry_getCentroid(*self)
+    def getEnvelope(self):
+        return _geos.Geometry_getEnvelope(*self)
+    def relate(self):
+        return _geos.Geometry_relate(*self)
+    def lineMerge(self):
+        return _geos.Geometry_lineMerge(*self)
+    def simplify(self):
+        return _geos.Geometry_simplify(*self)
+    def topologyPreserveSimplify(self):
+        return _geos.Geometry_topologyPreserveSimplify(*self)
+    def relatePattern(self):
+        return _geos.Geometry_relatePattern(*self)
+    def disjoint(self):
+        return _geos.Geometry_disjoint(*self)
+    def touches(self):
+        return _geos.Geometry_touches(*self)
+    def intersects(self):
+        return _geos.Geometry_intersects(*self)
+    def crosses(self):
+        return _geos.Geometry_crosses(*self)
+    def within(self):
+        return _geos.Geometry_within(*self)
+    def contains(self):
+        return _geos.Geometry_contains(*self)
+    def overlaps(self):
+        return _geos.Geometry_overlaps(*self)
+    def equals(self):
+        return _geos.Geometry_equals(*self)
+    def equalsExact(self):
+        return _geos.Geometry_equalsExact(*self)
+    def isEmpty(self):
+        return _geos.Geometry_isEmpty(*self)
+    def isValid(self):
+        return _geos.Geometry_isValid(*self)
+    def isSimple(self):
+        return _geos.Geometry_isSimple(*self)
+    def isRing(self):
+        return _geos.Geometry_isRing(*self)
+    def hasZ(self):
+        return _geos.Geometry_hasZ(*self)
+    def area(self):
+        return _geos.Geometry_area(*self)
+    def length(self):
+        return _geos.Geometry_length(*self)
+    def distance(self):
+        return _geos.Geometry_distance(*self)
 Geometry_swigregister = _geos.Geometry_swigregister
 Geometry_swigregister(Geometry)
 
@@ -181,7 +249,8 @@ class Point(Geometry):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_Point
     __del__ = lambda self : None;
-    def getCoordSeq(*args): return _geos.Point_getCoordSeq(*args)
+    def getCoordSeq(self):
+        return _geos.Point_getCoordSeq(*self)
 Point_swigregister = _geos.Point_swigregister
 Point_swigregister(Point)
 
@@ -191,7 +260,8 @@ class LineString(Geometry):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_LineString
     __del__ = lambda self : None;
-    def getCoordSeq(*args): return _geos.LineString_getCoordSeq(*args)
+    def getCoordSeq(self):
+        return _geos.LineString_getCoordSeq(*self)
 LineString_swigregister = _geos.LineString_swigregister
 LineString_swigregister(LineString)
 
@@ -201,7 +271,8 @@ class LinearRing(Geometry):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_LinearRing
     __del__ = lambda self : None;
-    def getCoordSeq(*args): return _geos.LinearRing_getCoordSeq(*args)
+    def getCoordSeq(self):
+        return _geos.LinearRing_getCoordSeq(*self)
 LinearRing_swigregister = _geos.LinearRing_swigregister
 LinearRing_swigregister(LinearRing)
 
@@ -211,9 +282,12 @@ class Polygon(Geometry):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_Polygon
     __del__ = lambda self : None;
-    def getExteriorRing(*args): return _geos.Polygon_getExteriorRing(*args)
-    def getNumInteriorRings(*args): return _geos.Polygon_getNumInteriorRings(*args)
-    def getInteriorRingN(*args): return _geos.Polygon_getInteriorRingN(*args)
+    def getExteriorRing(self):
+        return _geos.Polygon_getExteriorRing(*self)
+    def getNumInteriorRings(self):
+        return _geos.Polygon_getNumInteriorRings(*self)
+    def getInteriorRingN(self):
+        return _geos.Polygon_getInteriorRingN(*self)
 Polygon_swigregister = _geos.Polygon_swigregister
 Polygon_swigregister(Polygon)
 
@@ -223,7 +297,8 @@ class GeometryCollection(Geometry):
     __repr__ = _swig_repr
     __swig_destroy__ = _geos.delete_GeometryCollection
     __del__ = lambda self : None;
-    def getGeometryN(*args): return _geos.GeometryCollection_getGeometryN(*args)
+    def getGeometryN(self):
+        return _geos.GeometryCollection_getGeometryN(*self)
 GeometryCollection_swigregister = _geos.GeometryCollection_swigregister
 GeometryCollection_swigregister(GeometryCollection)
 

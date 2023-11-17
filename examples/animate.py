@@ -32,23 +32,27 @@ udata = data.variables['ugrdprs']
 vdata = data.variables['vgrdprs']
 # mult slp by 0.01 to put in units of millibars.
 slpin = 0.01*slpdata[ntime1:ntime2+1,:,:]
-uin = udata[ntime1:ntime2+1,0,:,:] 
-vin = vdata[ntime1:ntime2+1,0,:,:] 
+uin = udata[ntime1:ntime2+1,0,:,:]
+vin = vdata[ntime1:ntime2+1,0,:,:]
 dates = num2date(times[ntime1:ntime2+1], times.units, calendar='standard')
 # add cyclic points
 slp = np.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),np.float64)
-slp[:,:,0:-1] = slpin; slp[:,:,-1] = slpin[:,:,0]
+slp[:,:,0:-1] = slpin
+slp[:,:,-1] = slpin[:,:,0]
 u = np.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),np.float64)
-u[:,:,0:-1] = uin; u[:,:,-1] = uin[:,:,0]
+u[:,:,0:-1] = uin
+u[:,:,-1] = uin[:,:,0]
 v = np.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),np.float64)
-v[:,:,0:-1] = vin; v[:,:,-1] = vin[:,:,0]
-longitudes.append(360.); longitudes = np.array(longitudes)
+v[:,:,0:-1] = vin
+v[:,:,-1] = vin[:,:,0]
+longitudes.append(360.)
+longitudes = np.array(longitudes)
 # make 2-d grid of lons, lats
 lons, lats = np.meshgrid(longitudes,latitudes)
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-uin = udata[ntime1:ntime2+1,0,:,:] 
-vin = vdata[ntime1:ntime2+1,0,:,:] 
+uin = udata[ntime1:ntime2+1,0,:,:]
+vin = vdata[ntime1:ntime2+1,0,:,:]
 # create figure, add axes (leaving room for colorbar on right)
 fig = plt.figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
@@ -60,12 +64,14 @@ x, y = m(lons, lats)
 parallels = np.arange(-80.,90,20.)
 meridians = np.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
-nframe = 0; n1 = 10
+nframe = 0
+n1 = 10
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
-nt = 0; date = dates[nt]
+nt = 0
+date = dates[nt]
 CS1 = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k')
 CS2 = m.contourf(x,y,slp[nt,:,:],clevs,cmap=plt.cm.RdBu_r)
 # plot wind vectors on lat/lon grid.
@@ -88,7 +94,7 @@ qk = plt.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
 m.drawcoastlines(linewidth=1.5)
 m.drawparallels(parallels)
 m.drawmeridians(meridians)
-txt = plt.title('SLP and Wind Vectors '+str(date))
+txt = plt.title(f'SLP and Wind Vectors {str(date)}')
 # plot colorbar on a separate axes (only for first frame)
 cax = plt.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
 fig.colorbar(CS2,drawedges=True, cax=cax) # draw colorbar
@@ -105,7 +111,7 @@ def updatefig(nt):
     ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
     vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
     urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
-    txt.set_text('SLP and Wind Vectors '+str(date))
+    txt.set_text(f'SLP and Wind Vectors {str(date)}')
     Q.set_UVC(urot,vrot)
 
 ani = animation.FuncAnimation(fig, updatefig, frames=len(dates))

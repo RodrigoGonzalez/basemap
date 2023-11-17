@@ -28,7 +28,7 @@ ax = fig.add_subplot(211)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=plt.cm.Spectral)
 # colorbar on bottom.
-mnh.colorbar(location='bottom',pad='12%',ticks=CS.levels[0::4])
+mnh.colorbar(location='bottom', pad='12%', ticks=CS.levels[::4])
 mnh.drawcoastlines(linewidth=0.5)
 delat = 30.
 circles = np.arange(0.,90.,delat).tolist()+\

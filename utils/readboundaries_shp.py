@@ -22,10 +22,7 @@ def quantize(data,least_significant_digit):
     """
     precision = pow(10.,-least_significant_digit)
     exp = np.log10(precision)
-    if exp < 0:
-        exp = int(np.floor(exp))
-    else:
-        exp = int(np.ceil(exp))
+    exp = int(np.floor(exp)) if exp < 0 else int(np.ceil(exp))
     bits = np.ceil(np.log2(pow(10.,-exp)))
     scale = pow(2.,bits)
     return np.around(scale*data)/scale
@@ -163,61 +160,9 @@ def get_wdb_boundaries(resolution,level,rivers=False):
 # read in coastline data (only those polygons whose area > area_thresh).
 for resolution in ['c','l','i','h','f']:
     poly, polymeta = get_coast_polygons(resolution)
-    f = open(os.path.join(OUTPUT_DIR, 'gshhs_'+resolution+'.dat'), 'wb')
-    f2 = open(os.path.join(OUTPUT_DIR, 'gshhsmeta_'+resolution+'.dat'), 'w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
-        id = pm[5]
-        bstring = p.tostring()
-        f.write(bstring)
-        f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
-            north, offset, len(bstring),id))
-        offset = offset + len(bstring)
-    f.close()
-    f2.close()
-
-for resolution in ['c','l','i','h','f']:
-    poly, polymeta = get_wdb_boundaries(resolution,1)
-    f = open(os.path.join(OUTPUT_DIR, 'countries_'+resolution+'.dat'), 'wb')
-    f2 = open(os.path.join(OUTPUT_DIR, 'countriesmeta_'+resolution+'.dat'), 'w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
-        id = pm[5]
-        bstring = p.tostring()
-        f.write(bstring)
-        f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
-            north, offset, len(bstring),id))
-        offset = offset + len(bstring)
-    f.close()
-    f2.close()
-
-for resolution in ['c','l','i','h','f']:
-    poly, polymeta = get_wdb_boundaries(resolution,2)
-    f = open(os.path.join(OUTPUT_DIR, 'states_'+resolution+'.dat'), 'wb')
-    f2 = open(os.path.join(OUTPUT_DIR, 'statesmeta_'+resolution+'.dat'), 'w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
-        id = pm[5]
-        bstring = p.tostring()
-        f.write(bstring)
-        f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
-            north, offset, len(bstring),id))
-        offset = offset + len(bstring)
-    f.close()
-    f2.close()
-
-for resolution in ['c','l','i','h','f']:
-    f = open(os.path.join(OUTPUT_DIR, 'rivers_'+resolution+'.dat'), 'wb')
-    f2 = open(os.path.join(OUTPUT_DIR, 'riversmeta_'+resolution+'.dat'), 'w')
-    # Levels above 5 are intermittent rivers and irrigation canals.
-    # They haven't been included in the past, as far as I can tell, so I'm
-    # not including them here...
-    offset = 0
-    for level in range(1, 6):
-        poly, polymeta = get_wdb_boundaries(resolution,level,rivers=True)
+    with open(os.path.join(OUTPUT_DIR, f'gshhs_{resolution}.dat'), 'wb') as f:
+        f2 = open(os.path.join(OUTPUT_DIR, f'gshhsmeta_{resolution}.dat'), 'w')
+        offset = 0
         for p,pm in zip(poly,polymeta):
             typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
             id = pm[5]
@@ -226,5 +171,53 @@ for resolution in ['c','l','i','h','f']:
             f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
                 north, offset, len(bstring),id))
             offset = offset + len(bstring)
-    f.close()
+    f2.close()
+
+for resolution in ['c','l','i','h','f']:
+    poly, polymeta = get_wdb_boundaries(resolution,1)
+    with open(os.path.join(OUTPUT_DIR, f'countries_{resolution}.dat'), 'wb') as f:
+        f2 = open(os.path.join(OUTPUT_DIR, f'countriesmeta_{resolution}.dat'), 'w')
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
+            id = pm[5]
+            bstring = p.tostring()
+            f.write(bstring)
+            f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
+                north, offset, len(bstring),id))
+            offset = offset + len(bstring)
+    f2.close()
+
+for resolution in ['c','l','i','h','f']:
+    poly, polymeta = get_wdb_boundaries(resolution,2)
+    with open(os.path.join(OUTPUT_DIR, f'states_{resolution}.dat'), 'wb') as f:
+        f2 = open(os.path.join(OUTPUT_DIR, f'statesmeta_{resolution}.dat'), 'w')
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
+            id = pm[5]
+            bstring = p.tostring()
+            f.write(bstring)
+            f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
+                north, offset, len(bstring),id))
+            offset = offset + len(bstring)
+    f2.close()
+
+for resolution in ['c','l','i','h','f']:
+    with open(os.path.join(OUTPUT_DIR, f'rivers_{resolution}.dat'), 'wb') as f:
+        f2 = open(os.path.join(OUTPUT_DIR, f'riversmeta_{resolution}.dat'), 'w')
+        # Levels above 5 are intermittent rivers and irrigation canals.
+        # They haven't been included in the past, as far as I can tell, so I'm
+        # not including them here...
+        offset = 0
+        for level in range(1, 6):
+            poly, polymeta = get_wdb_boundaries(resolution,level,rivers=True)
+            for p,pm in zip(poly,polymeta):
+                typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
+                id = pm[5]
+                bstring = p.tostring()
+                f.write(bstring)
+                f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south,\
+                    north, offset, len(bstring),id))
+                offset = offset + len(bstring)
     f2.close()

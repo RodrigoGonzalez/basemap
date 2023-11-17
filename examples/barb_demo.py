@@ -4,10 +4,14 @@ import matplotlib.pyplot as plt
 
 # read in data.
 file = open('fcover.dat','r')
-ul=[];vl=[];pl=[]
-nlons=73; nlats=73
-dellat = 2.5; dellon = 5.
-for line in file.readlines():
+ul=[]
+vl=[]
+pl=[]
+nlons=73
+nlats=73
+dellat = 2.5
+dellon = 5.
+for line in file:
    l = line.replace('\n','').split()
    ul.append(float(l[0]))
    vl.append(float(l[1]))
@@ -19,7 +23,8 @@ lats1 = -90.+dellat*np.arange(nlats)
 lons1 = -180.+dellon*np.arange(nlons)
 lons, lats = np.meshgrid(lons1, lats1)
 # convert from mps to knots.
-u = 1.944*u; v = 1.944*v
+u = 1.944*u
+v = 1.944*v
 
 # plot barbs in map projection coordinates.
 
@@ -29,7 +34,8 @@ m = Basemap(width=10000000,height=10000000,lon_0=-90,lat_0=45.,lat_ts=45,
 x,y = m(lons,lats)
 # transform from spherical to map projection coordinates (rotation
 # and interpolation).
-nxv = 25; nyv = 25
+nxv = 25
+nyv = 25
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 # create a figure, add an axes.
 fig=plt.figure(figsize=(8,6))
@@ -58,7 +64,8 @@ m = Basemap(width=10000000,height=10000000,lon_0=-90,lat_0=-45.,lat_ts=-45,
 x,y = m(lons,lats)
 # transform from spherical to map projection coordinates (rotation
 # and interpolation).
-nxv = 25; nyv = 25
+nxv = 25
+nyv = 25
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 # create a figure, add an axes.
 fig=plt.figure(figsize=(8,6))

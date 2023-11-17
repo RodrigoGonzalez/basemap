@@ -4,10 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def get_input(prompt):
-    if sys.hexversion > 0x03000000:
-        return input(prompt)
-    else:
-        return raw_input(prompt)
+    return input(prompt) if sys.hexversion > 0x03000000 else raw_input(prompt)
 
 # create Basemap instance for Geostationary (satellite view) projection.
 lon_0 = float(get_input('enter reference longitude (lon_0):'))
@@ -23,7 +20,7 @@ m.drawlsmask(land_color='red',ocean_color='blue',lakes=True)
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
 m.drawmapboundary()
-plt.title('Geostationary Map Centered on Lon=%s' % (lon_0))
+plt.title(f'Geostationary Map Centered on Lon={lon_0}')
 
 # map with continents drawn and filled.
 fig = plt.figure()
@@ -35,5 +32,5 @@ m.drawcountries()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
-plt.title('Geostationary Map Centered on Lon=%s' % (lon_0))
+plt.title(f'Geostationary Map Centered on Lon={lon_0}')
 plt.show()

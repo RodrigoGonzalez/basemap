@@ -38,5 +38,5 @@ m.drawmeridians(np.arange(-180.,180.,60.))
 # add colorbar
 cb = m.colorbar(im1,"bottom", size="5%", pad="2%")
 # add a title.
-ax.set_title('SST and ICE analysis for %s'%date)
+ax.set_title(f'SST and ICE analysis for {date}')
 plt.show()

@@ -31,6 +31,6 @@ for proj in projs:
     m.drawstates()
     m.drawparallels(circles)
     m.drawmeridians(meridians)
-    plt.title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
+    plt.title(f'proj = {proj}' + f' centered on {lon_0}W, {lat_0}N', fontsize=10)
 
 plt.show()

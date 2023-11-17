@@ -21,8 +21,12 @@ Meeus, Jean (1998) Astronomical Algorithms (2nd Edition). Willmann-Bell,
 Virginia. p. 63
     """
     # based on redate.py by David Finlayson.
-    year=date.year; month=date.month; day=date.day
-    hour=date.hour; minute=date.minute; second=date.second
+    year=date.year
+    month=date.month
+    day=date.day
+    hour=date.hour
+    minute=date.minute
+    second=date.second
     # Convert time to fractions of a day
     day = day + hour/24.0 + minute/1440.0 + second/86400.0
     # Start Meeus algorithm (variables are in his notation)
@@ -38,21 +42,21 @@ Virginia. p. 63
     if calendar in ['standard','gregorian']:
         if jd >= 2299170.5:
             # 1582 October 15 (Gregorian Calendar)
-            B = 2 - A + int(A/4)
+            B = 2 - A + A // 4
         elif jd < 2299160.5:
             # 1582 October 5 (Julian Calendar)
             B = 0
         else:
             raise ValueError('impossible date (falls in gap between end of Julian calendar and beginning of Gregorian calendar')
     elif calendar == 'proleptic_gregorian':
-        B = 2 - A + int(A/4)
+        B = 2 - A + A // 4
     elif calendar == 'julian':
         B = 0
     else:
-        raise ValueError('unknown calendar, must be one of julian,standard,gregorian,proleptic_gregorian, got %s' % calendar)
-    # adjust for Julian calendar if necessary
-    jd = jd + B
-    return jd 
+        raise ValueError(
+            f'unknown calendar, must be one of julian,standard,gregorian,proleptic_gregorian, got {calendar}'
+        )
+    return jd + B 
 
 def epem(date):
     """

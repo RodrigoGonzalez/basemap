@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap 
+from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import __version__ as basemap_version
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
@@ -46,9 +46,9 @@ for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13]:
     m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
     # draw coastlines, fill continents, plot title.
     m.drawcoastlines()
-    m.drawmapboundary(fill_color='aqua') 
+    m.drawmapboundary(fill_color='aqua')
     m.fillcontinents(color='coral',lake_color='aqua')
-    title = 'Tissot Diagram: projection = %s' % m.projection
+    title = f'Tissot Diagram: projection = {m.projection}'
     sys.stdout.write(title+'\n')
     plt.title(title)
 

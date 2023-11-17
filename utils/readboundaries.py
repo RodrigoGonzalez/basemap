@@ -14,10 +14,7 @@ def quantize(data,least_significant_digit):
     """
     precision = pow(10.,-least_significant_digit)
     exp = np.log10(precision)
-    if exp < 0:
-        exp = int(np.floor(exp))
-    else:
-        exp = int(np.ceil(exp))
+    exp = int(np.floor(exp)) if exp < 0 else int(np.ceil(exp))
     bits = np.ceil(np.log2(pow(10.,-exp)))
     scale = pow(2.,bits)
     return np.around(scale*data)/scale
@@ -49,8 +46,10 @@ def interpolate_long_segments(coords, resolution):
     return np.column_stack([out_lon, out_lat]).astype(coords.dtype)
 
 def get_coast_polygons(coastfile):
-    polymeta = []; polybounds = []
-    lats = []; lons = []
+    polymeta = []
+    polybounds = []
+    lats = []
+    lons = []
     for line in open(coastfile):
         if line.startswith('#'):
             continue
@@ -74,14 +73,15 @@ def get_coast_polygons(coastfile):
         lons.append(lon); lats.append(lat)
     #lons.append(lons[0]); lats.append(lats[0])
     b = np.empty((len(lons),2),np.float32)
-    b[:,0] = lons; b[:,1] = lats
+    b[:,0] = lons
+    b[:,1] = lats
     if lsd is not None:
         b = quantize(b,lsd)
     polybounds.append(b)
-    polymeta2 = []
-    for meta,bounds in zip(polymeta,polybounds):
-        npts = bounds.shape[0]
-        polymeta2.append(meta[:-1] + [npts] + [meta[-1]])
+    polymeta2 = [
+        meta[:-1] + [bounds.shape[0]] + [meta[-1]]
+        for meta, bounds in zip(polymeta, polybounds)
+    ]
     return polybounds, polymeta2
 
 def get_boundary_lines(bdatfile, resolution):
@@ -122,61 +122,63 @@ def get_boundary_lines(bdatfile, resolution):
 
 # read in coastline data (only those polygons whose area > area_thresh).
 for resolution in ['c','l','i','h','f']:
-    coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
-    coastfile = 'gshhs_'+resolution+'.txt'
-    countryfile = 'countries_'+resolution+'.txt'
-    statefile = 'states_'+resolution+'.txt'
-    riverfile = 'rivers_'+resolution+'.txt'
+    coastlons = []
+    coastlats = []
+    coastsegind = []
+    coastsegtype = []
+    coastfile = f'gshhs_{resolution}.txt'
+    countryfile = f'countries_{resolution}.txt'
+    statefile = f'states_{resolution}.txt'
+    riverfile = f'rivers_{resolution}.txt'
 
     poly, polymeta = get_coast_polygons(coastfile)
-    f = open('../lib/mpl_toolkits/basemap/data/gshhs_'+resolution+'.dat','wb')
-    f2 = open('../lib/mpl_toolkits/basemap/data/gshhsmeta_'+resolution+'.dat','w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        bstring = p.tostring()
-        f.write(bstring)
-        typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
-        poly_id = pm[5]
-        f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south, north, offset, len(bstring), poly_id))
-        offset = offset + len(bstring)
-    f.close()
+    with open(f'../lib/mpl_toolkits/basemap/data/gshhs_{resolution}.dat', 'wb') as f:
+        f2 = open(f'../lib/mpl_toolkits/basemap/data/gshhsmeta_{resolution}.dat', 'w')
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            bstring = p.tostring()
+            f.write(bstring)
+            typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
+            poly_id = pm[5]
+            f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south, north, offset, len(bstring), poly_id))
+            offset = offset + len(bstring)
     f2.close()
 
     poly, polymeta = get_boundary_lines(countryfile, resolution)
-    f = open('../lib/mpl_toolkits/basemap/data/countries_'+resolution+'.dat','wb')
-    f2 = open('../lib/mpl_toolkits/basemap/data/countriesmeta_'+resolution+'.dat','w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        bstring = p.tostring()
-        f.write(bstring)
-        south,north,npts = pm[:]
-        f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
-        offset = offset + len(bstring)
-    f.close()
+    with open(f'../lib/mpl_toolkits/basemap/data/countries_{resolution}.dat', 'wb') as f:
+        f2 = open(
+            f'../lib/mpl_toolkits/basemap/data/countriesmeta_{resolution}.dat',
+            'w',
+        )
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            bstring = p.tostring()
+            f.write(bstring)
+            south,north,npts = pm[:]
+            f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
+            offset = offset + len(bstring)
     f2.close()
 
     poly, polymeta = get_boundary_lines(statefile, resolution)
-    f = open('../lib/mpl_toolkits/basemap/data/states_'+resolution+'.dat','wb')
-    f2 = open('../lib/mpl_toolkits/basemap/data/statesmeta_'+resolution+'.dat','w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        bstring = p.tostring()
-        f.write(bstring)
-        south,north,npts = pm[:]
-        f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
-        offset = offset + len(bstring)
-    f.close()
+    with open(f'../lib/mpl_toolkits/basemap/data/states_{resolution}.dat', 'wb') as f:
+        f2 = open(f'../lib/mpl_toolkits/basemap/data/statesmeta_{resolution}.dat', 'w')
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            bstring = p.tostring()
+            f.write(bstring)
+            south,north,npts = pm[:]
+            f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
+            offset = offset + len(bstring)
     f2.close()
 
     poly, polymeta = get_boundary_lines(riverfile, resolution)
-    f = open('../lib/mpl_toolkits/basemap/data/rivers_'+resolution+'.dat','wb')
-    f2 = open('../lib/mpl_toolkits/basemap/data/riversmeta_'+resolution+'.dat','w')
-    offset = 0
-    for p,pm in zip(poly,polymeta):
-        bstring = p.tostring()
-        f.write(bstring)
-        south,north,npts = pm[:]
-        f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
-        offset = offset + len(bstring)
-    f.close()
+    with open(f'../lib/mpl_toolkits/basemap/data/rivers_{resolution}.dat', 'wb') as f:
+        f2 = open(f'../lib/mpl_toolkits/basemap/data/riversmeta_{resolution}.dat', 'w')
+        offset = 0
+        for p,pm in zip(poly,polymeta):
+            bstring = p.tostring()
+            f.write(bstring)
+            south,north,npts = pm[:]
+            f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (-1,-1,npts, south, north, offset, len(bstring)))
+            offset = offset + len(bstring)
     f2.close()

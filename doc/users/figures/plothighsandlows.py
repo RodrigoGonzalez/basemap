@@ -25,8 +25,9 @@ date = datetime.now().strftime('%Y%m%d')+'00'
 # open OpenDAP dataset.
 #data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs/%s/gfs_%sz_anl" %\
 #        (date[0:8],date[8:10]))
-data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd%s/gfs_hd_%sz"%\
-        (date[0:8],date[8:10]))
+data = Dataset(
+    f"http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd{date[:8]}/gfs_hd_{date[8:10]}z"
+)
 
 
 
@@ -58,9 +59,12 @@ m.drawcoastlines(linewidth=1.25)
 m.fillcontinents(color='0.8')
 m.drawparallels(np.arange(-80,81,20),labels=[1,1,0,0])
 m.drawmeridians(np.arange(0,360,60),labels=[0,0,0,1])
-xlows = x[local_min]; xhighs = x[local_max]
-ylows = y[local_min]; yhighs = y[local_max]
-lowvals = prmsl[local_min]; highvals = prmsl[local_max]
+xlows = x[local_min]
+xhighs = x[local_max]
+ylows = y[local_min]
+yhighs = y[local_max]
+lowvals = prmsl[local_min]
+highvals = prmsl[local_max]
 # plot lows as blue L's, with min pressure value underneath.
 xyplotted = []
 # don't plot if there is already a L or H within dmin meters.
@@ -72,9 +76,16 @@ for x,y,p in zip(xlows, ylows, lowvals):
         if not dist or min(dist) > dmin:
             plt.text(x,y,'L',fontsize=14,fontweight='bold',
                     ha='center',va='center',color='b')
-            plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                    ha='center',va='top',color='b',
-                    bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
+            plt.text(
+                x,
+                y - dmin,
+                repr(int(p)),
+                fontsize=9,
+                ha='center',
+                va='top',
+                color='b',
+                bbox=dict(boxstyle="square", ec='None', fc=(1, 1, 1, 0.5)),
+            )
             xyplotted.append((x,y))
 # plot highs as red H's, with max pressure value underneath.
 xyplotted = []
@@ -84,9 +95,16 @@ for x,y,p in zip(xhighs, yhighs, highvals):
         if not dist or min(dist) > dmin:
             plt.text(x,y,'H',fontsize=14,fontweight='bold',
                     ha='center',va='center',color='r')
-            plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                    ha='center',va='top',color='r',
-                    bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
+            plt.text(
+                x,
+                y - dmin,
+                repr(int(p)),
+                fontsize=9,
+                ha='center',
+                va='top',
+                color='r',
+                bbox=dict(boxstyle="square", ec='None', fc=(1, 1, 1, 0.5)),
+            )
             xyplotted.append((x,y))
-plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % date)
+plt.title(f'Mean Sea-Level Pressure (with Highs and Lows) {date}')
 plt.show()

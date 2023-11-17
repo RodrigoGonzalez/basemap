@@ -12,6 +12,7 @@ heavy lifting), and the following functions:
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
+
 from distutils.version import LooseVersion
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -92,9 +93,9 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'gnom'     : 'Gnomonic',
              'rotpole'  : 'Rotated Pole',
              }
-supported_projections = []
-for _items in _projnames.items():
-    supported_projections.append(" %-17s%-40s\n" % (_items))
+supported_projections = [
+    " %-17s%-40s\n" % (_items) for _items in _projnames.items()
+]
 supported_projections = ''.join(supported_projections)
 
 _cylproj = ['cyl','merc','mill','gall','cea']
@@ -139,57 +140,54 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'rotpole'  : 'lon_0,o_lat_p,o_lon_p,corner lat/lon or corner x,y (no width/height)'
              }
 
-# create dictionary that maps epsg codes to Basemap kwargs.
-epsgf = open(os.path.join(pyproj.pyproj_datadir,'epsg'))
-epsg_dict={}
-for line in epsgf:
-    if line.startswith("#"):
-        continue
-    l = line.split()
-    code = l[0].strip("<>")
-    parms = ' '.join(l[1:-1])
-    _kw_args={}
-    for s in l[1:-1]:
-        try:
-            k,v = s.split('=')
-        except:
-            pass
-        k = k.strip("+")
-        if k=='proj':
-            if v == 'longlat': v = 'cyl'
-            if v not in _projnames:
-                continue
-            k='projection'
-        if k=='k':
-            k='k_0'
-        if k in ['projection','lat_1','lat_2','lon_0','lat_0',\
-                 'a','b','k_0','lat_ts','ellps','datum']:
-            if k not in ['projection','ellps','datum']:
-                v = float(v)
-            _kw_args[k]=v
-    if 'projection' in _kw_args:
-        if 'a' in _kw_args:
-            if 'b' in _kw_args:
-                _kw_args['rsphere']=(_kw_args['a'],_kw_args['b'])
-                del _kw_args['b']
-            else:
-                _kw_args['rsphere']=_kw_args['a']
-            del _kw_args['a']
-        if 'datum' in _kw_args:
-            if _kw_args['datum'] == 'NAD83':
-                _kw_args['ellps'] = 'GRS80'
-            elif _kw_args['datum'] == 'NAD27':
-                _kw_args['ellps'] = 'clrk66'
-            elif _kw_args['datum'] == 'WGS84':
-                _kw_args['ellps'] = 'WGS84'
-            del _kw_args['datum']
-        # supported epsg projections.
-        # omerc not supported yet, since we can't handle
-        # alpha,gamma and lonc keywords.
-        if _kw_args['projection'] != 'omerc':
-            epsg_dict[code]=_kw_args
-epsgf.close()
-
+with open(os.path.join(pyproj.pyproj_datadir,'epsg')) as epsgf:
+    epsg_dict={}
+    for line in epsgf:
+        if line.startswith("#"):
+            continue
+        l = line.split()
+        code = l[0].strip("<>")
+        parms = ' '.join(l[1:-1])
+        _kw_args={}
+        for s in l[1:-1]:
+            try:
+                k,v = s.split('=')
+            except:
+                pass
+            k = k.strip("+")
+            if k=='proj':
+                if v == 'longlat': v = 'cyl'
+                if v not in _projnames:
+                    continue
+                k='projection'
+            if k=='k':
+                k='k_0'
+            if k in ['projection','lat_1','lat_2','lon_0','lat_0',\
+                     'a','b','k_0','lat_ts','ellps','datum']:
+                if k not in ['projection','ellps','datum']:
+                    v = float(v)
+                _kw_args[k]=v
+        if 'projection' in _kw_args:
+            if 'a' in _kw_args:
+                if 'b' in _kw_args:
+                    _kw_args['rsphere']=(_kw_args['a'],_kw_args['b'])
+                    del _kw_args['b']
+                else:
+                    _kw_args['rsphere']=_kw_args['a']
+                del _kw_args['a']
+            if 'datum' in _kw_args:
+                if _kw_args['datum'] == 'NAD83':
+                    _kw_args['ellps'] = 'GRS80'
+                elif _kw_args['datum'] == 'NAD27':
+                    _kw_args['ellps'] = 'clrk66'
+                elif _kw_args['datum'] == 'WGS84':
+                    _kw_args['ellps'] = 'WGS84'
+                del _kw_args['datum']
+            # supported epsg projections.
+            # omerc not supported yet, since we can't handle
+            # alpha,gamma and lonc keywords.
+            if _kw_args['projection'] != 'omerc':
+                epsg_dict[code]=_kw_args
 # The __init__ docstring is pulled out here because it is so long;
 # Having it in the usual place makes it hard to get from the
 # __init__ argument list to the code that uses the arguments.
@@ -493,9 +491,11 @@ _Basemap_init_doc = """
 """ % locals()
 
 # unsupported projection error message.
-_unsupported_projection = ["'%s' is an unsupported projection.\n"]
-_unsupported_projection.append("The supported projections are:\n")
-_unsupported_projection.append(supported_projections)
+_unsupported_projection = [
+    "'%s' is an unsupported projection.\n",
+    "The supported projections are:\n",
+    supported_projections,
+]
 _unsupported_projection = ''.join(_unsupported_projection)
 
 def _validated_ll(param, name, minval, maxval):
@@ -507,9 +507,7 @@ def _validated_ll(param, name, minval, maxval):
 
 
 def _validated_or_none(param, name, minval, maxval):
-    if param is None:
-        return None
-    return _validated_ll(param, name, minval, maxval)
+    return None if param is None else _validated_ll(param, name, minval, maxval)
 
 
 def _insert_validated(d, param, name, minval, maxval):

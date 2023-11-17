@@ -11,7 +11,8 @@ lats = dset.variables['latitude'][:]
 lons = dset.variables['longitude'][:]
 time = dset.variables['time']
 times = time[:]
-t1 = times.min(); t2 = times.max()
+t1 = times.min()
+t2 = times.max()
 date1 = num2date(t1, units=time.units)
 date2 = num2date(t2, units=time.units)
 dset.close()
@@ -22,6 +23,8 @@ x, y = m(lons,lats)
 m.drawmapboundary(fill_color='#99ffff')
 m.fillcontinents(color='#cc9966',lake_color='#99ffff')
 m.scatter(x,y,3,marker='o',color='k')
-plt.title('Locations of %s ARGO floats active between %s and %s' %\
-        (len(lats),date1,date2),fontsize=12)
+plt.title(
+    f'Locations of {len(lats)} ARGO floats active between {date1} and {date2}',
+    fontsize=12,
+)
 plt.show()

@@ -71,7 +71,7 @@ ptch = m.pcolor(X, Y, toplot, cmap = WhGrYlBu, norm = plt.matplotlib.colors.Boun
 cb = m.colorbar(ptch, location='right',pad='10%', boundaries = bounds, spacing = 'proportional', format = '%.3f', extend = 'both') # draw colorbar
 
 # Add units to the colorbar
-cb.ax.set_xlabel('%s*1000.' % o3.units.strip())
+cb.ax.set_xlabel(f'{o3.units.strip()}*1000.')
 
 
 # plot blue dot on Houston, Baton Rouge, and Atlanta
