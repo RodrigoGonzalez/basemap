@@ -194,7 +194,7 @@ norm_E = Normalize(Evals.min()-10, Evals.max()+20)  # -+ for jet_r for brt clrs
 # green range, helping to distinguish CRs from candidates.
 cmap = plt.cm.get_cmap('jet_r')
 for cr in CRs.values():
-    color = cmap(norm_E(cr.E))[0:3]  # ignore alpha
+    color = cmap(norm_E(cr.E))[:3]
     m.tissot(cr.l, cr.b, 2., 30, ec='none', color=color, alpha=1)
 
 # Plot candidate directions.

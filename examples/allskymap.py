@@ -68,16 +68,9 @@ class AllSkyMap(Basemap):
     east_lon = 180.
     west_lon = 180.+1.e-10
 
-    def __init__(self, 
-                       projection='hammer',
-                       lat_0=0., lon_0=0.,
-                       suppress_ticks=True,
-                       boundinglat=None,
-                       fix_aspect=True,
-                       anchor=str('C'),
-                       ax=None):
+    def __init__(self, projection='hammer', lat_0=0., lon_0=0., suppress_ticks=True, boundinglat=None, fix_aspect=True, anchor='C', ax=None):
 
-        if projection != 'hammer' and projection !='moll':
+        if projection not in ['hammer', 'moll']:
             raise ValueError('Only hammer and moll projections supported!')
 
         # Use Basemap's init, enforcing the values of many parameters that
@@ -153,10 +146,7 @@ class AllSkyMap(Basemap):
         lats = len(lons)*[0.]
         for lon,lat in zip(lons, lats):
             x, y = self(lon+hnudge, lat+vnudge)
-            if lon < 0:
-                lon_lbl = 360 + lon
-            else:
-                lon_lbl = lon
+            lon_lbl = 360 + lon if lon < 0 else lon
             pl.text(x, y, angle_symbol(lon_lbl), fontsize=fontsize,
                     verticalalignment=valign,
                     horizontalalignment=halign)
@@ -165,10 +155,7 @@ class AllSkyMap(Basemap):
         """
         Return True if lon is in the eastern hemisphere of the map wrt lon_0.
         """
-        if (lon-self._lon_0) % 360. <= self.east_lon:
-            return True
-        else:
-            return False
+        return (lon-self._lon_0) % 360. <= self.east_lon
 
     def geodesic(self, lon1, lat1, lon2, lat2, del_s=.01, clip=True, **kwargs):
         """
@@ -256,7 +243,7 @@ class AllSkyMap(Basemap):
         
         # TODO:  Just return the polygon (not a list) when there is only one
         # polygon?  Or stick with the list for consistency?
-        
+
         # This is based on Basemap.tissot, but addresses a limitation of that
         # method by handling tissots that cross the limb of the map by finding
         # separate polygons in the eastern and western hemispheres comprising
@@ -278,7 +265,7 @@ class AllSkyMap(Basemap):
         else:
             adj_lon = self.west_lon
             opp_lon = self.east_lon
-        for n in range(npts):
+        for _ in range(npts):
             az = az+delaz
             # skip segments along equator (Geod can't handle equatorial arcs)
             if np.allclose(0.,lat_0) and (np.allclose(90.,az) or np.allclose(270.,az)):
@@ -307,14 +294,13 @@ class AllSkyMap(Basemap):
                     last_lon = lon
         poly1 = Polygon(segs1, **kwargs)
         ax.add_patch(poly1)
-        if segs2:
-            over.reverse()
-            segs2.extend(over)
-            poly2 = Polygon(segs2, **kwargs)
-            ax.add_patch(poly2)
-            return [poly1, poly2]
-        else:
+        if not segs2:
             return [poly1]
+        over.reverse()
+        segs2.extend(over)
+        poly2 = Polygon(segs2, **kwargs)
+        ax.add_patch(poly2)
+        return [poly1, poly2]
 
 
 if __name__ == '__main__':

@@ -13,9 +13,7 @@ for item in m.cities_info:
     if population < 0: continue # population missing
     pop.append(population)
 popranks = prctile_rank(pop,100)
-colors = []
-for rank in popranks:
-    colors.append(plt.cm.jet(float(rank)/100.))
+colors = [plt.cm.jet(float(rank)/100.) for rank in popranks]
 m.drawcoastlines()
 m.fillcontinents()
 m.scatter(x,y,25,colors,marker='o',edgecolors='none',zorder=10)

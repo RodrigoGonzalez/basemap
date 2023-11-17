@@ -33,7 +33,8 @@ m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 # draw meridians
 meridians = np.arange(180.,360.,10.)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
-ny = data.shape[0]; nx = data.shape[1]
+ny = data.shape[0]
+nx = data.shape[1]
 lons, lats = m.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
 x, y = m(lons, lats) # compute map proj coordinates.
 # draw filled contours.
@@ -43,5 +44,5 @@ cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
 cbar = m.colorbar(cs,location='bottom',pad="5%")
 cbar.set_label('mm')
 # add title
-plt.title(prcpvar.long_name+' for period ending '+prcpvar.dateofdata)
+plt.title(f'{prcpvar.long_name} for period ending {prcpvar.dateofdata}')
 plt.show()

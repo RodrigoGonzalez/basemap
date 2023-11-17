@@ -17,7 +17,7 @@ from netCDF4 import Dataset as NetCDFFile, num2date
 if len(sys.argv) > 1:
     YYYYMMDD = sys.argv[1]
 else:
-    YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
+    YYYYMMDD = datetime.datetime.now().strftime('%Y%m%d')
 
 # set OpenDAP server URL.
 try:
@@ -38,7 +38,7 @@ print(data.variables.keys())
 latitudes = data.variables['lat']
 longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
-times = fcsttimes[0:6] # first 6 forecast times.
+times = fcsttimes[:6]
 ntimes = len(times)
 # convert times for datetime instances.
 fdates = num2date(times,units=fcsttimes.units,calendar='standard')

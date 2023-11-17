@@ -4,10 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def get_input(prompt):
-    if sys.hexversion > 0x03000000:
-        return input(prompt)
-    else:
-        return raw_input(prompt)
+    return input(prompt) if sys.hexversion > 0x03000000 else raw_input(prompt)
 
 # the shortest route from the center of the map
 # to any other point is a straight line in the azimuthal
@@ -58,6 +55,6 @@ xpt, ypt = m(lon_0, lat_0)
 m.plot([xpt],[ypt],'ro') 
 
 # draw the title.
-plt.title('The World According to Garp in '+location)
+plt.title(f'The World According to Garp in {location}')
 
 plt.show()

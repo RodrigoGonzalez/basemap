@@ -16,7 +16,7 @@ m.drawcountries()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
-plt.title('Geostationary Map Centered on Lon=%s' % lon_0)
+plt.title(f'Geostationary Map Centered on Lon={lon_0}')
 
 fig = plt.figure()
 # global ortho map
@@ -32,6 +32,6 @@ m.drawcountries()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
-plt.title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
+plt.title(f'Orthographic Map Centered on Lon={lon_0}, Lat={lat_0}')
 
 plt.show()

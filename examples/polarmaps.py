@@ -26,27 +26,27 @@ projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidista
 # loop over hemispheres, make a 4-panel plot for each hemisphere
 # showing all four polar projections.
 for hem in ['North','South']:
-    if hem == 'South':
-        lon_0 = -130.
-        lon_0_ortho = lon_0 - 180.
-        lat_0 = -90.
-        #  Lambert Azimuth bounding lat must not extend into opposite hem.
-        bounding_lat = -0.01
-    elif hem == 'North':
+    if hem == 'North':
         lon_0 = 130.
         lon_0_ortho = lon_0
         lat_0 = 90.
         #  Lambert Azimuth bounding lat must not extend into opposite hem.
         bounding_lat = 0.01
+    elif hem == 'South':
+        lon_0 = -130.
+        lon_0_ortho = lon_0 - 180.
+        lat_0 = -90.
+        #  Lambert Azimuth bounding lat must not extend into opposite hem.
+        bounding_lat = -0.01
     # loop over projections, one for each panel of the figure.
     fig = plt.figure(figsize=(8,8))
     npanel = 0
     for proj,projname in zip(projs,projnames):
         npanel = npanel + 1
-        if hem == 'South':
-            projection = 'sp'+proj
-        elif hem == 'North':
-            projection = 'np'+proj
+        if hem == 'North':
+            projection = f'np{proj}'
+        elif hem == 'South':
+            projection = f'sp{proj}'
         # setup map projection
         # centered on Australia (for SH) or US (for NH).
         if proj == 'ortho':
@@ -69,6 +69,6 @@ for hem in ['North','South']:
         # draw boundary around map region.
         m.drawmapboundary()
         # draw title.
-        plt.title(hem+' Polar '+projname,y=1.05,fontsize=12)
-        print('plotting '+hem+' Polar '+projname+' basemap ...')
+        plt.title(f'{hem} Polar {projname}', y=1.05, fontsize=12)
+        print(f'plotting {hem} Polar {projname} basemap ...')
 plt.show()

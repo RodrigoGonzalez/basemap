@@ -10,8 +10,14 @@ from distutils import ccompiler, sysconfig
 # Do not require numpy for just querying the package
 # Taken from the netcdf-python setup file (which took it from h5py setup file).
 inc_dirs = []
-if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
-       ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
+if (
+    any(
+        f'--{opt}' in sys.argv
+        for opt in Distribution.display_option_names
+        + ['help-commands', 'help']
+    )
+    or sys.argv[1] == 'egg_info'
+):
     from distutils.core import setup, Extension
 else:
     import numpy
@@ -38,12 +44,7 @@ def checkversion(GEOS_dir):
     return geos_version
 
 # get location of geos lib from environment variable if it is set.
-if 'GEOS_DIR' in os.environ:
-    GEOS_dir = os.environ.get('GEOS_DIR')
-else:
-# set GEOS_dir manually here if automatic detection fails.
-    GEOS_dir = None
-
+GEOS_dir = os.environ.get('GEOS_DIR', None)
 user_home = os.path.expanduser('~')
 geos_search_locations = [user_home, os.path.join(user_home, 'local'),
                          '/usr', '/usr/local', '/sw', '/opt', '/opt/local']
@@ -56,11 +57,10 @@ if GEOS_dir is None:
         sys.stdout.write('checking for GEOS lib in %s ....\n' % direc)
         if geos_version is None or geos_version < '"3.1.1"':
             continue
-        else:
-            sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
-                    (geos_version[1:-1],direc))
-            GEOS_dir = direc
-            break
+        sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
+                (geos_version[1:-1],direc))
+        GEOS_dir = direc
+        break
 else:
     geos_version = checkversion(GEOS_dir)
 
@@ -76,9 +76,8 @@ is in /usr/local/include, and libgeos_c is in /usr/local/lib,
 set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
-else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include'),inc_dirs]
-    geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
+geos_include_dirs=[os.path.join(GEOS_dir,'include'),inc_dirs]
+geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 namespace_packages = ['mpl_toolkits']
@@ -89,11 +88,7 @@ package_dirs       = {'':'lib'}
 
 # don't use runtime_library_dirs on windows (workaround
 # for a distutils bug - http://bugs.python.org/issue2437).
-if sys.platform == 'win32':
-    runtime_lib_dirs = []
-else:
-    runtime_lib_dirs = geos_library_dirs
-
+runtime_lib_dirs = [] if sys.platform == 'win32' else geos_library_dirs
 extensions = [ Extension("_geoslib",['src/_geoslib.c'],
                          library_dirs=geos_library_dirs,
                          runtime_library_dirs=runtime_lib_dirs,

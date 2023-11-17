@@ -19,5 +19,5 @@ map.fillcontinents(color='coral',lake_color='aqua')
 # map shows through. Use current time in UTC.
 date = datetime.utcnow()
 CS=map.nightshade(date)
-plt.title('Day/Night Map for %s (UTC)' % date.strftime("%d %b %Y %H:%M:%S"))
+plt.title(f'Day/Night Map for {date.strftime("%d %b %Y %H:%M:%S")} (UTC)')
 plt.show()

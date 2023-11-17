@@ -4,9 +4,10 @@ import distutils.util
 import math
 
 # Put local build directory on head of python path
-platformdir = '-'.join((distutils.util.get_platform(),
-                        '.'.join(map(str, sys.version_info[0:2]))))
-sys.path.insert(0, os.path.join('build', 'lib.' + platformdir))
+platformdir = '-'.join(
+    (distutils.util.get_platform(), '.'.join(map(str, sys.version_info[:2])))
+)
+sys.path.insert(0, os.path.join('build', f'lib.{platformdir}'))
 
 # import geos from the local build directory
 import geos
@@ -23,9 +24,7 @@ def wkt_print_geoms(geoms):
 
 def create_point(x,y):
     c = geos.Coordinate(x,y)
-    p = global_factory.createPoint(c)
-
-    return p
+    return global_factory.createPoint(c)
 
 def create_ushaped_linestring(xoffset, yoffset, side):
     cl = geos.DefaultCoordinateSequence()
@@ -35,8 +34,7 @@ def create_ushaped_linestring(xoffset, yoffset, side):
     cl.add(geos.Coordinate(xoffset+side, yoffset+side))
     cl.add(geos.Coordinate(xoffset+side, yoffset))
 
-    ls = global_factory.createLineString(cl)
-    return ls
+    return global_factory.createLineString(cl)
 
 def create_square_linearring(xoffset,yoffset,side):
     cl = geos.DefaultCoordinateSequence()
@@ -47,8 +45,7 @@ def create_square_linearring(xoffset,yoffset,side):
     cl.add(geos.Coordinate(xoffset+side,yoffset))
     cl.add(geos.Coordinate(xoffset,yoffset))
 
-    lr = global_factory.createLinearRing(cl)
-    return lr
+    return global_factory.createLinearRing(cl)
 
 def create_square_polygon(xoffset,yoffset,side):
     outer = create_square_linearring(xoffset,yoffset,side)
@@ -57,8 +54,7 @@ def create_square_polygon(xoffset,yoffset,side):
     holes = geos.vector_GeometryP()
     holes.push_back(inner)
 
-    poly = global_factory.createPolygon(outer,holes)
-    return poly
+    return global_factory.createPolygon(outer,holes)
 
 def create_simple_collection(geoms):
     collect = geos.vector_GeometryP()

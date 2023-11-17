@@ -2,6 +2,7 @@
 example showing how to plot data from a DEM file and an ESRI shape file using 
 gdal (http://pypi.python.org/pypi/GDAL).
 """
+
 from osgeo import gdal, ogr
 from mpl_toolkits.basemap import Basemap, cm
 import numpy as np
@@ -14,7 +15,8 @@ gd = gdal.Open('us_25m.dem')
 array = gd.ReadAsArray()
 # get lat/lon coordinates from DEM file.
 coords = gd.GetGeoTransform()
-nlons = array.shape[1]; nlats = array.shape[0]
+nlons = array.shape[1]
+nlats = array.shape[0]
 delon = coords[1]
 delat = coords[5]
 lons = coords[0] + delon*np.arange(nlons)
@@ -28,7 +30,8 @@ m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
 # (so that data is oriented in increasing latitude, as transform_scalar requires).
 topoin = ma.masked_values(array[::-1,:],-999.)
 # transform DEM data to a 4 km native projection grid
-nx = int((m.xmax-m.xmin)/4000.)+1; ny = int((m.ymax-m.ymin)/4000.)+1
+nx = int((m.xmax-m.xmin)/4000.)+1
+ny = int((m.ymax-m.ymin)/4000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
 # plot DEM image on map.
 im = m.imshow(topodat,cmap=cm.GMT_haxby_r)
@@ -60,5 +63,7 @@ for feat in L: # iterate over features in layer
                 m.plot(x,y,'k')
 # draw colorbar.
 m.colorbar(im)
-plt.title(gd.GetDescription()+' with state boundaries from '+g.GetName(),y=1.05)
+plt.title(
+    f'{gd.GetDescription()} with state boundaries from {g.GetName()}', y=1.05
+)
 plt.show()

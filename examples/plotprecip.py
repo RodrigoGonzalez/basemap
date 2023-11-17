@@ -19,7 +19,7 @@ prcpvar = nc.variables['amountofprecip']
 data = 0.01*prcpvar[:]
 latcorners = nc.variables['lat'][:]
 loncorners = -nc.variables['lon'][:]
-plottitle = prcpvar.long_name+' for period ending '+prcpvar.dateofdata
+plottitle = f'{prcpvar.long_name} for period ending {prcpvar.dateofdata}'
 print(data.min(), data.max())
 print(latcorners)
 print(loncorners)
@@ -48,7 +48,8 @@ m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 delon = 10.
 meridians = np.arange(180.,360.,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
-ny = data.shape[0]; nx = data.shape[1]
+ny = data.shape[0]
+nx = data.shape[1]
 lons, lats = m.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
 x, y = m(lons, lats) # compute map proj coordinates.
 # draw filled contours.
@@ -58,7 +59,7 @@ cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
 cbar = m.colorbar(cs,location='bottom',pad="10%")
 cbar.set_label('mm')
 # plot title
-plt.title(plottitle+'- contourf',fontsize=10)
+plt.title(f'{plottitle}- contourf', fontsize=10)
 
 plt.subplot(212)
 ax = plt.gca()
@@ -85,5 +86,5 @@ cb.set_label('mm')
 cb.set_ticks(np.linspace(clevs[0],clevs[-1],len(clevs)))
 cb.set_ticklabels(['%g' % clev for clev in clevs])
 # plot title
-plt.title(plottitle+' - imshow',fontsize=10)
+plt.title(f'{plottitle} - imshow', fontsize=10)
 plt.show() # display onscreen.

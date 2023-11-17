@@ -4,10 +4,14 @@ import matplotlib.pyplot as plt
 
 # read in data.
 file = open('fcover.dat','r')
-ul=[];vl=[];pl=[]
-nlons=73; nlats=73
-dellat = 2.5; dellon = 5.
-for line in file.readlines():
+ul=[]
+vl=[]
+pl=[]
+nlons=73
+nlats=73
+dellat = 2.5
+dellon = 5.
+for line in file:
    l = line.replace('\n','').split()
    ul.append(float(l[0]))
    vl.append(float(l[1]))
@@ -49,7 +53,7 @@ delon = 45.
 meridians = np.arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Surface Winds Winds and Pressure (lat-lon grid)',y=1.075)
- 
+
 # plot vectors in map projection coordinates.
 
 # north polar projection.
@@ -57,8 +61,10 @@ m = Basemap(lon_0=-135,boundinglat=25,round=True,
             resolution='c',area_thresh=10000.,projection='npstere')
 # transform from spherical to map projection coordinates (rotation
 # and interpolation).
-nxv = 41; nyv = 41
-nxp = 101; nyp = 101
+nxv = 41
+nyv = 41
+nxp = 101
+nyp = 101
 spd = np.sqrt(u**2+v**2)
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 pdat, xp, yp = m.transform_scalar(p,lons1,lats1,nxp,nyp,returnxy=True)

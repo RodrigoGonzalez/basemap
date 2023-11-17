@@ -24,10 +24,7 @@ except ImportError:
     test_files.remove('ploticos.py')
 
 py_path = os.environ.get('PYTHONPATH')
-if py_path is None:
-    py_path = '.'
-else:
-    py_path = os.pathsep.join(['.',py_path])
+py_path = '.' if py_path is None else os.pathsep.join(['.',py_path])
 os.environ['PYTHONPATH'] = py_path
 
 for f in test_files:
@@ -35,6 +32,5 @@ for f in test_files:
     ff = os.path.join(sys.path[0],f)
     args = [sys.executable,ff]
     sys.stdout.write("Running %s\n" % f)
-    status = os.spawnve(os.P_WAIT,sys.executable,args,os.environ)
-    if status:
+    if status := os.spawnve(os.P_WAIT, sys.executable, args, os.environ):
         sys.stdout.write('TEST FAILURE (status=%s)\n' % (status))

@@ -63,10 +63,7 @@ class Proj(object):
             except:
                 self.rmajor = projparams['bR_a']
             self.rminor = self.rmajor
-        if self.rmajor == self.rminor:
-            self.ellipsoid = False
-        else:
-            self.ellipsoid = True
+        self.ellipsoid = self.rmajor != self.rminor
         self.flattening = (self.rmajor-self.rminor)/self.rmajor
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
@@ -97,8 +94,8 @@ class Proj(object):
                 if llcrnrx > 1.e20 or llcrnry > 1.e20:
                     raise ValueError(_lower_left_out_of_bounds)
         elif self.projection == 'aeqd' and\
-             (llcrnrlon == -180 and llcrnrlat == -90  and urcrnrlon == 180 and\
-             urcrnrlat == 90):
+                 (llcrnrlon == -180 and llcrnrlat == -90  and urcrnrlon == 180 and\
+                 urcrnrlat == 90):
             self._fulldisk = True
             self._proj4 = pyproj.Proj(projparams)
             # raise an exception for ellipsoids - there appears to be a bug
@@ -135,7 +132,7 @@ class Proj(object):
             lonmax = int(100*lonmax)/100.
             # width and height of visible projection
             P = pyproj.Proj(proj='geos',a=self.rmajor,\
-                            b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
+                                b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
             x1,y1 = P(0.,latmax); x2,y2 = P(lonmax,0.)
             width = x2; height = y1
             self._height = height
@@ -167,7 +164,7 @@ class Proj(object):
             lonmax = int(100*lonmax)/100.
             # width and height of visible projection
             P = pyproj.Proj(proj='nsper',a=self.rmajor,\
-                            b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
+                                b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
             x1,y1 = P(0.,latmax); x2,y2 = P(lonmax,0.)
             width = x2; height = y1
             self._height = height
@@ -274,11 +271,8 @@ class Proj(object):
         else:
             x,y = args
             onearray = False
-        if self.projection == 'cyl': # for cyl x,y == lon,lat
-            if onearray:
-                return xy
-            else:
-                return x,y
+        if self.projection == 'cyl':
+            return xy if onearray else (x, y)
         inverse = kw.get('inverse', False)
         if onearray:
             outxy = self._proj4(xy, inverse=inverse)
@@ -302,28 +296,24 @@ class Proj(object):
                         outx = _rad2dg*(x/rcurv) + self.llcrnrlon
                     except: # x a sequence
                         outx = [_rad2dg*(xi/rcurv) + self.llcrnrlon for xi in x]
-        else:
-            if self.projection in ['merc','mill','gall']:
-                if self.projection == 'merc':
-                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
-                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
-                else:
-                    coslat = 1.
-                    sinlat = 0.
-                # radius of curvature of the ellipse perpendicular to
-                # the plane of the meridian.
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
-                if onearray:
-                    outxy[:,0] = rcurv*_dg2rad*(xy[:,0]-self.llcrnrlon)
-                else:
-                    try: # x is a scalar or an array
-                        outx = rcurv*_dg2rad*(x-self.llcrnrlon)
-                    except: # x is a sequence.
-                        outx = [rcurv*_dg2rad*(xi-self.llcrnrlon) for xi in x]
-        if onearray:
-            return outxy
-        else:
-            return outx, outy
+        elif self.projection in ['merc','mill','gall']:
+            if self.projection == 'merc':
+                coslat = math.cos(math.radians(self.projparams['lat_ts']))
+                sinlat = math.sin(math.radians(self.projparams['lat_ts']))
+            else:
+                coslat = 1.
+                sinlat = 0.
+            # radius of curvature of the ellipse perpendicular to
+            # the plane of the meridian.
+            rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
+            if onearray:
+                outxy[:,0] = rcurv*_dg2rad*(xy[:,0]-self.llcrnrlon)
+            else:
+                try: # x is a scalar or an array
+                    outx = rcurv*_dg2rad*(x-self.llcrnrlon)
+                except: # x is a sequence.
+                    outx = [rcurv*_dg2rad*(xi-self.llcrnrlon) for xi in x]
+        return outxy if onearray else (outx, outy)
 
     def makegrid(self,nx,ny,returnxy=False):
         """
@@ -336,10 +326,7 @@ class Proj(object):
         x = self.llcrnrx+dx*np.indices((ny,nx),np.float32)[1,:,:]
         y = self.llcrnry+dy*np.indices((ny,nx),np.float32)[0,:,:]
         lons, lats = self(x, y, inverse=True)
-        if returnxy:
-            return lons, lats, x, y
-        else:
-            return lons, lats
+        return (lons, lats, x, y) if returnxy else (lons, lats)
 
     def makegrid3d(self,nx,ny,returnxy=False):
         """
@@ -353,29 +340,28 @@ class Proj(object):
         xy[...,0] = self.llcrnrx+dx*np.indices((ny,nx),np.float32)[1,:,:]
         xy[...,1] = self.llcrnry+dy*np.indices((ny,nx),np.float32)[0,:,:]
         lonlat = self(xy, inverse=True)
-        if returnxy:
-            return lonlat, xy
-        else:
-            return lonlat
+        return (lonlat, xy) if returnxy else lonlat
 
 if __name__ == "__main__":
 
-    params = {}
-    params['proj'] = 'lcc'
-    params['R'] = 6371200
-    params['lat_1'] = 50
-    params['lat_2'] = 50
-    params['lon_0'] = -107
-    nx = 349; ny = 277; dx = 32463.41; dy = dx
+    params = {'proj': 'lcc', 'R': 6371200, 'lat_1': 50, 'lat_2': 50, 'lon_0': -107}
+    nx = 349
+    ny = 277
+    dx = 32463.41
+    dy = dx
     awips221 = Proj(params,-145.5,1.0,(nx-1)*dx,(ny-1)*dy,urcrnrislatlon=False)
     # AWIPS grid 221 parameters
     # (from http://www.nco.ncep.noaa.gov/pmb/docs/on388/tableb.html)
     llcornerx, llcornery = awips221(-145.5,1.)
     # find 4 lon/lat corners of AWIPS grid 221.
-    llcornerx = 0.; llcornery = 0.
-    lrcornerx = dx*(nx-1); lrcornery = 0.
-    ulcornerx = 0.; ulcornery = dy*(ny-1)
-    urcornerx = dx*(nx-1); urcornery = dy*(ny-1)
+    llcornerx = 0.
+    llcornery = 0.
+    lrcornerx = dx*(nx-1)
+    lrcornery = 0.
+    ulcornerx = 0.
+    ulcornery = dy*(ny-1)
+    urcornerx = dx*(nx-1)
+    urcornery = dy*(ny-1)
     llcornerlon, llcornerlat = awips221(llcornerx, llcornery, inverse=True)
     lrcornerlon, lrcornerlat = awips221(lrcornerx, lrcornery, inverse=True)
     urcornerlon, urcornerlat = awips221(urcornerx, urcornery, inverse=True)
@@ -393,7 +379,8 @@ if __name__ == "__main__":
     sys.stdout.write('   -2.566 46.352\n')
     sys.stdout.write('   148.639 46.635\n')
     # compute lons and lats for the whole AWIPS grid 221 (377x249).
-    import time; t1 = time.clock()
+    import time
+    t1 = time.clock()
     lons, lats = awips221.makegrid(nx,ny)
     t2 = time.clock()
     sys.stdout.write('compute lats/lons for all points on AWIPS 221 grid (%sx%s)\n' %(nx,ny))
